@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION valor_aleatorio_entre (lim_inferior INT, lim_superior
  END;
  $$ LANGUAGE plpgsql;
 
- -- Exercício 1 — Mostrar todos os números pares de 1 a 100
+-- Exercício 1 — Mostrar todos os números pares de 1 a 100
 -- Usando LOOP 
 DO $$
 DECLARE
@@ -77,4 +77,80 @@ BEGIN
     END LOOP;
 END 
 $$;
+-- Exercício 2 — Mostrar quanto dos 6 números gerados aleatoriamente entre -50 e 50 são positivos.
+-- Usando LOOP
+DO $$
+DECLARE
+    num INT := 1;
+    valor INT;
+    positivo INT := 0;
+BEGIN
+    LOOP
+        EXIT WHEN num > 6;
+        valor := valor_aleatorio_entre(-50, 50);
+        RAISE NOTICE 'Valor %: %', num, valor;
+        IF valor > 0 THEN
+            positivo := positivo + 1;
+        END IF;
+        num := num + 1;
+    END LOOP;
+    RAISE NOTICE 'Positivos encontrados: %', positivo;
+END 
+$$;
+-- Usando WHILE
+DO $$
+DECLARE
+    num INT := 1;
+    valor INT;
+    positivo INT := 0;
+BEGIN
+    WHILE num <= 6 LOOP
+        valor := valor_aleatorio_entre(-50, 50);
+        RAISE NOTICE 'Valor %: %', num, valor;
+        IF valor > 0 THEN
+            positivo := positivo + 1;
+        END IF;
+        num := num + 1;
+    END LOOP;
+    RAISE NOTICE 'Positivos encontrados: %', positivo;
+END 
+$$;
+-- Usando FOR
+DO $$
+DECLARE
+    num INT := 1;
+    valor INT;
+    positivo INT := 0;
+BEGIN
+    FOR num IN 1..6 LOOP
+        valor := valor_aleatorio_entre(-50, 50);
+        RAISE NOTICE 'Valor %: %', num, valor;
+        IF valor > 0 THEN
+            positivo := positivo + 1;
+        END IF;
+    END LOOP;
+    RAISE NOTICE 'Positivos encontrados: %', positivo;
+END 
+$$;
+-- Usando FOREACH
+DO $$
+DECLARE
+    num INT [] := '{}';
+    valor INT;
+    positivo INT := 0;
+    numArray INT;
+BEGIN
+-- automatiza o preenchimento do array
+    FOR numArray IN 1..6 LOOP
+        num := array_append(num, valor_aleatorio_entre(-50, 50));
+    END LOOP;
 
+    FOREACH valor IN ARRAY num LOOP
+        RAISE NOTICE 'Valor: %', valor;
+        IF valor > 0 THEN
+            positivo := positivo + 1;
+        END IF;
+    END LOOP;
+    RAISE NOTICE 'Positivos encontrados: %', positivo;
+END 
+$$;
