@@ -154,3 +154,134 @@ BEGIN
     RAISE NOTICE 'Positivos encontrados: %', positivo;
 END 
 $$;
+-- Exercício 3 - Leia 2 valores inteiros X e Y. A seguir, calcule e mostre a soma dos números ímpares entre eles.
+-- O valor menor entre X e Y inclusive não deve entrar na soma, assim como o maior também não entra.
+-- Usando LOOP
+DO $$
+DECLARE
+    x INT := valor_aleatorio_entre(20, 50);
+    y INT := valor_aleatorio_entre(20, 50);
+    inicio INT;
+    fim INT;
+    soma INT := 0;
+BEGIN
+    IF x < y THEN
+        inicio := x + 1;
+        fim := y - 1;
+    ELSE
+        inicio := y + 1;
+        fim := x - 1;
+    END IF;
+    RAISE NOTICE 'Valores sorteados: x = %, y = %', x, y;
+    LOOP
+        EXIT WHEN inicio > fim;
+        IF inicio % 2 <> 0 THEN -- valida ímpar
+            soma := soma + inicio;
+        END IF;
+        inicio := inicio + 1;
+    END LOOP;
+    RAISE NOTICE 'Soma dos ímpares: %', soma;
+END 
+$$;
+
+-- Usando While
+DO $$
+DECLARE
+    x INT := valor_aleatorio_entre(20, 50);
+    y INT := valor_aleatorio_entre(20, 50);
+    inicio INT;
+    fim INT;
+    soma INT := 0;
+BEGIN
+-- Verifica qual dos dois valores sorteados é o menor
+    IF x < y THEN
+    -- Se x for menor, começamos no valor logo após x e vamos até antes de y
+        inicio := x + 1;
+        fim := y - 1;
+    -- Se y for menor, começamos no valor logo após y e vamos até antes de x
+    ELSE
+        inicio := y + 1;
+        fim := x - 1;
+    END IF;
+
+    RAISE NOTICE 'Valores sorteados: x = %, y = %', x, y;
+
+    WHILE inicio <= fim LOOP
+        IF inicio % 2 <> 0 THEN -- valida ímpar
+            soma := soma + inicio;
+        END IF;
+        inicio := inicio + 1;
+    END LOOP;
+    RAISE NOTICE 'Soma dos ímpares: %', soma;
+END
+$$;
+
+-- Usando FOR 
+DO $$
+DECLARE
+    x INT := valor_aleatorio_entre(20, 50);
+    y INT := valor_aleatorio_entre(20, 50);
+    inicio INT;
+    fim INT;
+    soma INT := 0;
+    i INT; -- contador do FOR
+BEGIN
+-- Verifica qual dos dois valores sorteados é o menor
+    IF x < y THEN
+    -- Se x for menor, começamos no valor logo após x e vamos até antes de y
+        inicio := x + 1;
+        fim := y - 1;
+    -- Se y for menor, começamos no valor logo após y e vamos até antes de x
+    ELSE
+        inicio := y + 1;
+        fim := x - 1;
+    END IF;
+
+    RAISE NOTICE 'Valores sorteados: x = %, y = %', x, y;
+
+    FOR i IN inicio..fim LOOP
+        IF i % 2 <> 0 THEN -- valida ímpar
+            soma := soma + i;
+        END IF;
+    END LOOP;
+    RAISE NOTICE 'Soma dos ímpares: %', soma;
+END
+$$;
+-- Usando FOREACH
+DO $$
+DECLARE
+    x INT := valor_aleatorio_entre(20, 50);
+    y INT := valor_aleatorio_entre(20, 50);
+    inicio INT;
+    fim INT;
+    soma INT := 0;
+    numeros INT[] := '{}';  -- array que vai conter os números entre x e y
+    n INT;  -- elemento atual do array
+BEGIN
+-- Verifica qual dos dois valores sorteados é o menor
+    IF x < y THEN
+    -- Se x for menor, começamos no valor logo após x e vamos até antes de y
+        inicio := x + 1;
+        fim := y - 1;
+    -- Se y for menor, começamos no valor logo após y e vamos até antes de x
+    ELSE
+        inicio := y + 1;
+        fim := x - 1;
+    END IF;
+    RAISE NOTICE 'Valores sorteados: x = %, y = %', x, y;
+
+    -- Preenche o array com os números entre x e y
+    FOR i IN inicio..fim LOOP
+        numeros := array_append(numeros, i);
+    END LOOP;
+
+    -- Itera sobre o array com FOREACH
+    FOREACH n IN ARRAY numeros LOOP
+        IF n % 2 <> 0 THEN  -- verifica se é ímpar
+            soma := soma + n;
+        END IF;
+    END LOOP;
+
+    RAISE NOTICE 'Soma dos ímpares: %', soma;
+END 
+$$;
