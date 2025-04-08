@@ -469,3 +469,35 @@ BEGIN
     END LOOP;
 END 
 $$;
+
+
+-- 2.2 - Faça um programa que calcule o determinante de uma matriz quadrada de ordem 3
+-- utilizando a regra de Sarrus. 
+-- Preencha a matriz com valores inteiros aleatórios no intervalo de 1 a 12.
+DO $$
+DECLARE
+    matriz INT[3][3] := ARRAY[
+        [valor_aleatorio_entre(1, 12), valor_aleatorio_entre(1, 12), valor_aleatorio_entre(1, 12)],
+        [valor_aleatorio_entre(1, 12), valor_aleatorio_entre(1, 12), valor_aleatorio_entre(1, 12)],
+        [valor_aleatorio_entre(1, 12), valor_aleatorio_entre(1, 12), valor_aleatorio_entre(1, 12)]
+    ];
+    det INT;
+BEGIN
+    RAISE NOTICE 'Matriz 3x3:';
+    FOR i IN 1..3 LOOP
+        RAISE NOTICE '% % %', matriz[i][1], matriz[i][2], matriz[i][3];
+    END LOOP;
+
+    -- Aplicando a regra de Sarrus
+    det := (
+        matriz[1][1] * matriz[2][2] * matriz[3][3] +
+        matriz[1][2] * matriz[2][3] * matriz[3][1] +
+        matriz[1][3] * matriz[2][1] * matriz[3][2]
+    ) - (
+        matriz[1][3] * matriz[2][2] * matriz[3][1] +
+        matriz[1][1] * matriz[2][3] * matriz[3][2] +
+        matriz[1][2] * matriz[2][1] * matriz[3][3]
+    );
+    RAISE NOTICE 'Determinante da matriz: %', det;
+END 
+$$;
