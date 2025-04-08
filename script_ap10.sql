@@ -285,3 +285,187 @@ BEGIN
     RAISE NOTICE 'Soma dos ímpares: %', soma;
 END 
 $$;
+-- Exercício 4 - Leia pares de valores M e N.
+-- Para cada par, imprima a sequência do menor para o maior (inclusive) e a soma dos valores.
+-- O programa deve encerrar quando M ≤ 0 ou N ≤ 0.
+
+-- Usando LOOP
+DO $$
+DECLARE
+    m INT;
+    n INT;
+    inicio INT;
+    fim INT;
+    i INT;
+    soma INT;
+BEGIN
+    LOOP
+        -- Gera dois valores aleatórios
+        m := valor_aleatorio_entre(-5, 100);  -- permite que o loop pare eventualmente
+        n := valor_aleatorio_entre(1, 100);
+
+        -- Verifica condição de parada
+        EXIT WHEN m <= 0 OR n <= 0;
+
+        -- Define início e fim com base no menor e maior valor
+        IF m < n THEN
+            inicio := m;
+            fim := n;
+        ELSE
+            inicio := n;
+            fim := m;
+        END IF;
+
+        soma := 0;
+        RAISE NOTICE 'Par gerado: M = %, N = %', m, n;
+
+        i := inicio;
+        LOOP
+            EXIT WHEN i > fim;
+
+            soma := soma + i;
+            RAISE NOTICE '% ', i;
+
+            i := i + 1;
+        END LOOP;
+        RAISE NOTICE 'Soma = %', soma;
+    END LOOP;
+END 
+$$;
+
+-- Usando While
+
+DO $$
+DECLARE
+    m INT;
+    n INT;
+    inicio INT;
+    fim INT;
+    i INT;
+    soma INT;
+    contador INT := 1;
+BEGIN
+    -- Limitando para no máximo 5 execuções com possibilidade de parar antes
+    WHILE contador <= 5 LOOP
+        m := valor_aleatorio_entre(-5, 100);  -- pode sortear valor <= 0
+        n := valor_aleatorio_entre(1, 100);
+
+        -- Verifica condição de parada
+        EXIT WHEN m <= 0 OR n <= 0;
+
+        IF m < n THEN
+            inicio := m;
+            fim := n;
+        ELSE
+            inicio := n;
+            fim := m;
+        END IF;
+
+        soma := 0;
+        RAISE NOTICE 'Par gerado: M = %, N = %', m, n;
+
+        i := inicio;
+        WHILE i <= fim LOOP
+            soma := soma + i;
+            RAISE NOTICE '% ', i;
+            i := i + 1;
+        END LOOP;
+
+        RAISE NOTICE 'Soma = %', soma;
+
+        contador := contador + 1;
+    END LOOP;
+END 
+$$;
+
+-- Usando FOR
+DO $$
+DECLARE
+    m INT;
+    n INT;
+    menor INT;
+    maior INT;
+    soma INT;
+    i INT;
+BEGIN
+    -- Vamos simular 5 pares (o último com zero para encerrar)
+    FOR cont IN 1..5 LOOP
+        -- Geração dos valores aleatórios
+        IF cont = 5 THEN
+            m := 0;  -- força a condição de parada
+            n := valor_aleatorio_entre(1, 100);
+        ELSE
+            m := valor_aleatorio_entre(1, 100);
+            n := valor_aleatorio_entre(1, 100);
+        END IF;
+
+        -- Verifica condição de parada
+        EXIT WHEN m <= 0 OR n <= 0;
+
+        -- Define limites do intervalo
+        IF m < n THEN
+            menor := m;
+            maior := n;
+        ELSE
+            menor := n;
+            maior := m;
+        END IF;
+
+        soma := 0;
+        RAISE NOTICE 'Par gerado: M = %, N = %', m, n;
+
+        FOR i IN menor..maior LOOP
+            soma := soma + i;
+            RAISE NOTICE '% ', i;
+        END LOOP;
+
+        RAISE NOTICE 'Soma = %', soma;
+    END LOOP;
+END 
+$$;
+
+-- Usando FOREACH
+DO $$
+DECLARE
+    pares INT[][] := ARRAY[
+        [valor_aleatorio_entre(1, 100), valor_aleatorio_entre(1, 100)],
+        [valor_aleatorio_entre(1, 100), valor_aleatorio_entre(1, 100)],
+        [valor_aleatorio_entre(1, 100), valor_aleatorio_entre(1, 100)],
+        [valor_aleatorio_entre(1, 100), valor_aleatorio_entre(1, 100)],
+        [0, valor_aleatorio_entre(1, 100)]  -- força parada
+    ];
+    par INT[];
+    m INT;
+    n INT;
+    menor INT;
+    maior INT;
+    soma INT;
+    i INT;
+BEGIN
+    FOREACH par SLICE 1 IN ARRAY pares LOOP
+        m := par[1];
+        n := par[2];
+
+        EXIT WHEN m <= 0 OR n <= 0;
+
+        -- Define o intervalo ordenado
+        IF m < n THEN
+            menor := m;
+            maior := n;
+        ELSE
+            menor := n;
+            maior := m;
+        END IF;
+
+        soma := 0;
+        RAISE NOTICE 'Par gerado: M = %, N = %', m, n;
+
+        FOR i IN menor..maior LOOP
+            soma := soma + i;
+            RAISE NOTICE '% ', i;
+        END LOOP;
+
+        RAISE NOTICE 'Soma = %', soma;
+    END LOOP;
+END 
+$$;
